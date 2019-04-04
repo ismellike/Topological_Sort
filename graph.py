@@ -26,10 +26,17 @@ def read_file(path):
     nodes = []
     with open(path, "r") as file:
         index = -1
+        max = 0
         node_i = None
         for line in file.readlines():
             split1 = int(line.split(',')[0])
             split2 = int(line.split(',')[1])
+
+            if(max < split1):
+                max = split1
+            if(max < split2):
+                max = split2
+
             if(index == split1):
                 node_i.addChild(split2)
             else:
@@ -48,6 +55,12 @@ def read_file(path):
                 node_i.addChild(split2)
         #add last node
         nodes.append(node_i)
+
+	#add till max
+    while index < max:
+         index += 1
+         nodes.append(node(index))
+
     g = graph(nodes)
     g.setDegrees()
     return g
