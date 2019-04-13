@@ -4,64 +4,37 @@ class node(object):
     def __init__(self, index):
         self.children = []
         self.index = index
+        self.degree = 0
     def addChild(self, index):
         self.children.append(index)
 
 class graph(object):
-	def __init__(self, nodes, degrees = None):
+	def __init__(self, nodes):
 		self.nodes = nodes
-		if degrees == None:
-			self.degrees = []
-			for i in range(len(nodes)):
-				self.degrees.append(0)
-		else:
-			self.degrees = degrees
-	def setDegrees(self):
-		for n in self.nodes:
-			for cIndex in n.children:
-				self.degrees[cIndex] += 1
 
 #read a graph in -> return a tree
 def read_file(path):
     nodes = []
     with open(path, "r") as file:
-        index = -1
-        max = 0
-        node_i = None
+        maxIndex = -1
         for line in file.readlines():
             split1 = int(line.split(',')[0])
             split2 = int(line.split(',')[1])
+            index = max(split1, split2)
 
-            if(max < split1):
-                max = split1
-            if(max < split2):
-                max = split2
+            if(maxIndex < index):
+                while maxIndex < index:
+                    nodes.append(None)
+                    maxIndex += 1
 
-            if(index == split1):
-                node_i.addChild(split2)
-            else:
-                #previous node needs to be appended
-                if(index != -1):
-                    nodes.append(node_i)
+            if(nodes[split1] is None):
+                nodes[split1] = node(split1)
+            nodes[split1].addChild(split2)
 
-				#check for leaf nodes
-                if(index + 1 != split1):
-                    while index + 1 < split1:
-                         index += 1
-                         nodes.append(node(index))
-
-                index = split1
-                node_i = node(split1)
-                node_i.addChild(split2)
-        #add last node
-        nodes.append(node_i)
-
-	#add till max
-    while index < max:
-         index += 1
-         nodes.append(node(index))
+            if(nodes[split2] is None):
+                nodes[split2] = node(split2)
+            nodes[split2].degree += 1
 
     g = graph(nodes)
-    g.setDegrees()
     return g
             

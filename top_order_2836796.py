@@ -4,15 +4,19 @@ import graph
 def top_sort(g):
 	if not g.nodes:
 		return []
+
 	v = []
 	for node in g.nodes:
-		if g.degrees[node.index] == 0:
-			for childIndex in node.children:
-				g.degrees[childIndex] -= 1
-			v.append(node)
-			g.nodes.remove(node)
-			v+=top_sort(g)
-			return v
+		if node is not None:
+			if node.degree == 0:
+				for childIndex in node.children:
+					g.nodes[childIndex].degree -= 1
+				v.append(node)
+				g.nodes[node.index] = None
+				v+=top_sort(g)
+				return v
+
+	return []
 
 def main():
 	if(len(sys.argv) < 2):
